@@ -1,0 +1,24 @@
+.myTasks{
+    display: grid;
+    grid-template-columns: 50px 150px 50px;
+    margin: 5px 0 5px 0;
+}
+.complited{
+    color: green;
+    text-decoration: line-through;
+}
+.active{
+    color: red;
+    text-decoration: underline;
+}
+.addTasks{
+    display: flex;
+    justify-content: space-between;
+}
+.content{
+    width: 215px;
+}
+.sortBtn{
+    display: flex;
+    justify-content: space-between;
+}
