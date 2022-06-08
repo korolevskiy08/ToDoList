@@ -1,7 +1,7 @@
 import React from "react";
 
 type ButtonType = {
-    name: string,
+    title: string,
     callBack: ()=>void,
 }
 
@@ -13,7 +13,7 @@ export const Button = (props: ButtonType) => {
 
     return(
         <div>
-            <button onClick={onClickHandler}>{props.name}</button>
+            <button onClick={onClickHandler}>{props.title}</button>
         </div>
     )
 }

@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
 import './App.css';
 import {TodoList} from "./components/TodoList/TodoList";
+import {v1} from 'uuid'
 
+export type FilterValuesType = "all" | "active" | "completed";
 
 function App() {
 
     let [tasks, setTask] = useState([
-        {id: 1, title: "HTML&CSS", isDone: true},
-        {id: 2, title: "JS", isDone: true},
-        {id: 3, title: "ReactJS", isDone: false}
+        {id: v1(), title: "HTML&CSS", isDone: true},
+        {id: v1(), title: "JS", isDone: true},
+        {id: v1(), title: "ReactJS", isDone: false}
     ])
 
     let [nameBtn, setNameBtn] = useState('All')
@@ -22,7 +24,11 @@ function App() {
         filterTask = tasks.filter(el => el.isDone === false)
     }
 
-    const removeTasks = (id: number) => {
+    const changeFilter = (value: FilterValuesType) => {
+        setNameBtn(value)
+    }
+
+    const removeTasks = (id: string) => {
         tasks = tasks.filter(el => el.id !== id)
         setTask(tasks)
     }
@@ -31,12 +37,27 @@ function App() {
         setNameBtn(nameBtn)
     }
 
+    const addTask = (newTaskTitle: string) => {
+        let newTask = {
+            id: v1(),
+            title: newTaskTitle,
+            isDone: false
+        }
+        let newTasks = [newTask, ...tasks]
+        setTask(newTasks)
+        console.log(newTask)
+    }
+
+
+
     return (
         <div className="App">
             <TodoList filterTask={filterTask}
                       title={'My tasks'}
                       callBack={onClickHandler}
+                      changeFilter={changeFilter}
                       removeTasks={removeTasks}
+                      addTask={addTask}
             />
         </div>
     );

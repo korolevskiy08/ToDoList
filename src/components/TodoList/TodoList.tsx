@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import c from './TodoList.module.css'
 import {Button} from "../Bytton/Button";
-import {Input} from "../Input/Input";
+import {FilterValuesType} from "../../App";
+
 
 type TasksType = {
-    id: number,
+    id: string,
     title: string,
     isDone: boolean
 }
@@ -13,10 +14,37 @@ type TodoListType = {
     filterTask: Array<TasksType>
     title: string
     callBack: (nameBtn: string) => void
-    removeTasks: (id: number) => void
+    changeFilter: (value: FilterValuesType) =>void
+    removeTasks: (id: string) => void
+    addTask: (newTaskTitle: string) => void
 }
 
 export const TodoList = (props: TodoListType) => {
+
+    let [newTaskTitle, setNewTaskTitle] = useState('')
+
+    const addTaskHandler = () => {
+        props.addTask(newTaskTitle)
+        setNewTaskTitle('')
+    }
+
+    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        setNewTaskTitle(event.currentTarget.value)
+
+    }
+
+    const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.ctrlKey && event.code === 'Enter'){
+            addTaskHandler()
+        }
+        console.log(event)
+    }
+
+    const korolChangeHandler = (value: FilterValuesType) => {
+        console.log(value)
+        props.changeFilter(value)
+    }
+
     return (
         <div>
             <ul className={c.content}>
@@ -25,10 +53,13 @@ export const TodoList = (props: TodoListType) => {
                 </div>
                 <div className={c.addTasks}>
                     <div>
-                        <Input title={''} setTitle={() => {}}/>
+                        <input onChange={onChangeHandler}
+                               value={newTaskTitle}
+                        onKeyPress={onKeyPressHandler}
+                        />
                     </div>
                     <div>
-                        <Button name={'+'} callBack={() => {}}/>
+                        <Button title={'+'} callBack={addTaskHandler}/>
                     </div>
                 </div>
 
@@ -36,10 +67,7 @@ export const TodoList = (props: TodoListType) => {
                     return (
                         <li key={el.id} className={c.myTasks}>
                             <div>
-                                <button onClick={() => {
-                                    props.removeTasks(el.id)
-                                }}>X
-                                </button>
+                                <button onClick={() => {props.removeTasks(el.id)}}>X</button>
                             </div>
                             <div className={`${el.isDone === true ? c.complited : c.active}`}>
                                 {el.title}
@@ -51,9 +79,9 @@ export const TodoList = (props: TodoListType) => {
                     )
                 })}
                 <div className={c.sortBtn}>
-                    <button onClick={() => props.callBack('All')}>All</button>
-                    <button onClick={() => props.callBack('Completed')}>Completed</button>
-                    <button onClick={() => props.callBack('Active')}>Active</button>
+                    <Button title={'All'} callBack={()=>korolChangeHandler('all')} />
+                    <Button title={'Active'} callBack={()=>korolChangeHandler('active')} />
+                    <Button title={'Completed'} callBack={()=>korolChangeHandler('completed')} />
                 </div>
 
 
