@@ -48,8 +48,6 @@ function App() {
         console.log(newTask)
     }
 
-
-
     return (
         <div className="App">
             <TodoList filterTask={filterTask}
