@@ -4,48 +4,43 @@ import {Button} from "../Bytton/Button";
 import {FilterValuesType} from "../../App";
 import {Input} from "../Input/Input";
 
-type TasksType = {
+export type TasksType = {
     id: string,
     title: string,
     isDone: boolean
 }
-
 type TodoListType = {
     filterTask: Array<TasksType>
     title: string
-    callBack: (nameBtn: string) => void
-    changeFilter: (value: FilterValuesType) => void
-    removeTasks: (id: string) => void
-    addTask: (newTaskTitle: string) => void
+    changeFilter: (todoListID: string, value: FilterValuesType) => void
+    removeTasks: (todoListID: string, id: string) => void
+    addTask: (todoListID: string, newTaskTitle: string) => void
+    changeCheckBox: (todoListID: string, taskId: string, value: boolean) => void
+    todoListID: string
 }
 
 export const TodoList = (props: TodoListType) => {
 
     let [newTaskTitle, setNewTaskTitle] = useState('')
+    let [error, setError] = useState<string | null>(null)
+
 
     const addTaskHandler = () => {
-        props.addTask(newTaskTitle)
-        setNewTaskTitle('')
+        if (newTaskTitle.trim() !== '') {
+            props.addTask(props.todoListID,newTaskTitle)
+            setNewTaskTitle('')
+            setError(null)
+        } else {
+            setError('Error')
+        }
     }
 
-    // const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    //     setNewTaskTitle(event.currentTarget.value)
-    //
-    // }
-    //
-    // const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-    //     if (event.ctrlKey && event.code === 'Enter') {
-    //         addTaskHandler()
-    //     }
-    //     console.log(event)
-    // }
+    const korolChangeHandler = (value: FilterValuesType) => props.changeFilter(props.todoListID, value)
 
-    const korolChangeHandler = (value: FilterValuesType) => {
-        console.log(value)
-        props.changeFilter(value)
+    const onClickHandler = (id: string) => props.removeTasks(props.todoListID, id)
+    const onChangeCheckBoxHandler = (taskId: string, value: boolean) => {
+        props.changeCheckBox(props.todoListID, taskId, value)
     }
-
-    const onClickHandler = (id: string) => props.removeTasks(id)
 
     return (
         <div>
@@ -56,7 +51,9 @@ export const TodoList = (props: TodoListType) => {
                 </div>
                 <div className={c.addTasks}>
                     <div>
-                        <Input setTitle={setNewTaskTitle}
+                        <Input setError={setError}
+                            error={error}
+                               setTitle={setNewTaskTitle}
                                title={newTaskTitle}
                                addTaskHandler={addTaskHandler}
                         />
@@ -74,20 +71,23 @@ export const TodoList = (props: TodoListType) => {
 
                         />
                     </div>
-                </div>
 
+                </div>
+                <div className={c.errorMessage}>{error}</div>
                 {props.filterTask.map(el => {
 
                     return (
                         <li key={el.id} className={c.myTasks}>
                             <div>
-                                <Button title={'X'} callBack={()=>onClickHandler(el.id)}/>
+                                <Button title={'X'} callBack={() => onClickHandler(el.id)}/>
                             </div>
                             <div className={`${el.isDone === true ? c.complited : c.active}`}>
                                 {el.title}
                             </div>
                             <div>
-                                <input type={"checkbox"} checked={el.isDone}/>
+                                <input
+                                    onChange={(event) => onChangeCheckBoxHandler(el.id, event.currentTarget.checked)}
+                                    type={"checkbox"} checked={el.isDone}/>
                             </div>
                         </li>
                     )
